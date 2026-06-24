@@ -60,3 +60,12 @@ def redis_check():
         return {"redis": value}
     except Exception as e:
         return {"redis": "connection_failed", "error": str(e)}
+    
+    import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s"
+)
+
+logging.info("Application Started")
