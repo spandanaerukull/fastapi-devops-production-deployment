@@ -69,3 +69,6 @@ logging.basicConfig(
 )
 
 logging.info("Application Started")
+logging.info("Health endpoint called")
+logging.info("Database endpoint called")
+logging.info("Redis endpoint called")
