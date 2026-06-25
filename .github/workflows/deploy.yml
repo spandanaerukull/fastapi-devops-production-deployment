@@ -18,6 +18,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Validate Docker Compose
+        run: docker compose config
+
       - name: Build Docker image
         run: docker build -t fastapi-app .
 
@@ -28,7 +31,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
-          script_stop: true
+          command_timeout: 10m
           script: |
             set -e
 
@@ -38,17 +41,22 @@ jobs:
             git fetch origin master
             git reset --hard origin/master
 
+            echo "Validating Docker Compose configuration..."
+            docker compose config
+
             echo "Building and restarting Docker containers..."
             docker compose up -d --build --remove-orphans
 
             echo "Waiting for application startup..."
-            sleep 10
+            sleep 15
 
             echo "Checking containers..."
             docker compose ps
 
-            echo "Testing health endpoint..."
+            echo "Testing application endpoints..."
             curl --fail --retry 5 --retry-delay 5 http://localhost/health
+            curl --fail --retry 5 --retry-delay 5 http://localhost/db-check
+            curl --fail --retry 5 --retry-delay 5 http://localhost/redis-check
 
             echo "Removing unused Docker images..."
             docker image prune -f
