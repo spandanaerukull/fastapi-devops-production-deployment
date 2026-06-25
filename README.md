@@ -52,3 +52,4 @@ docker compose down
 ```bash
 http://localhost/health
 ```
+Test automatic EC2 deployment
