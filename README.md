@@ -4,6 +4,28 @@
 
 This project demonstrates a production-ready deployment of a FastAPI application using Docker, Docker Compose, PostgreSQL, Redis, NGINX Reverse Proxy, and GitHub Actions CI/CD.
 
+## Architecture
+Developer
+   |
+   | git push
+   v
+GitHub Repository
+   |
+   | GitHub Actions CI/CD
+   v
+AWS EC2 / Elastic IP
+   |
+   v
+NGINX Reverse Proxy
+   |
+   v
+FastAPI Application
+   |             |
+   v             v
+PostgreSQL      Redis
+
+
+
 ## Technology Stack
 
 * FastAPI
