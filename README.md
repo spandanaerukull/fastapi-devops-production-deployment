@@ -114,14 +114,15 @@ docker compose exec -T postgres \
 pg_dump -U fastapiuser fastapidb > backup.sql
 
 Restore a database backup:
-cat backup.sql | docker compose exec -T postgres \
-psql -U fastapiuser fastapidb
+
+cat backup.sql | docker compose exec -T postgres \ ```
+psql -U fastapiuser fastapidb ```
 
 # Restart Start 
 
 All services use Docker restart policies so they restart automatically after a container failure or server reboot.
 
-To restart all services manually:
+# To restart all services manually:
 
 docker compose restart
 
@@ -131,7 +132,7 @@ docker compose up -d --build --remove-orphans
 
 To check service status:
 
-docker compose ps
+docker compose ps ```text
 
 # Application health can be verified using:
 
