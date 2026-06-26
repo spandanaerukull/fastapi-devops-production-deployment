@@ -25,6 +25,8 @@ FastAPI Application
 PostgreSQL      Redis
 
 
+PostgreSQL and Redis are accessible only within the Docker Compose internal network and are not exposed publicly.
+
 
 ## Technology Stack
 
