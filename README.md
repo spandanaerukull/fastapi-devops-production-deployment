@@ -140,4 +140,97 @@ curl http://localhost/health
 curl http://localhost/db-check
 curl http://localhost/redis-check
 
+## Logging Strategy
 
+The FastAPI application uses Python's built-in logging module to record application startup, endpoint access, successful service connections, and errors.
+
+Application logs can be viewed using:
+
+```bash
+docker compose logs --tail=100 fastapi
+
+NGINX access and error logs can be viewed using:
+docker compose logs --tail=100 nginx```
+
+PostgreSQL and Redis logs can be viewed using:
+
+docker compose logs --tail=100 postgres```
+docker compose logs --tail=100 redis```
+
+To follow logs in real time:
+docker compose logs -f```
+
+Commit message:
+
+```text
+Add logging strategy documentation
+
+## Deployment Instructions
+
+### 1. Launch an EC2 Server
+
+Create an Ubuntu EC2 instance and configure the Security Group with:
+
+- Port 22 for SSH
+- Port 80 for HTTP
+- Port 443 for HTTPS
+
+PostgreSQL port `5432` and Redis port `6379` must not be exposed publicly.
+
+### 2. Connect to the Server
+
+```bash
+ssh -i your-key.pem ubuntu@YOUR_ELASTIC_IP
+
+Install Git, Docker, and Docker Compose on the server.
+
+Verify the installations:
+git --version
+docker --version
+docker compose version
+
+4. Clone the Repository
+git clone https://github.com/spandanaerukulla/fastapi-devops-production-deployment.git
+cd fastapi-devops-production-deployment
+
+5. Create the Environment File
+Copy the example environment file:
+cp .env.example .env
+
+6. Start the Application
+docker compose up -d --build
+
+7. Verify the Containers
+docker compose ps
+
+# The following services should be running:
+
+1 FastAPI
+2 PostgreSQL
+3 Redis
+4 NGINX
+
+8. Verify the Endpoints
+-> curl http://localhost/healt
+-> curl http://localhost/db-check
+-> curl http://localhost/redis-check
+
+9. Access the Application
+Open the following URLs using the EC2 Elastic IP:
+
+http://18.213.165.227/
+http://18.213.165.227/health
+http://18.213.165.227/db-check
+http://18.213.165.227/redis-check
+http://18.213.165.227/docs
+
+10. Automatic Deployment
+Every push to the master branch triggers the GitHub Actions workflow.
+
+# The workflow:
+
+Builds the Docker image.
+Connects to the EC2 server using SSH.
+Pulls the latest source code.
+Rebuilds and restarts the Docker Compose services.
+Verifies the health, database, and Redis endpoints.
