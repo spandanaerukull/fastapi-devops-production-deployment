@@ -117,7 +117,7 @@ Restore a database backup:
 cat backup.sql | docker compose exec -T postgres \
 psql -U fastapiuser fastapidb
 
-Restart Strategy
+# Restart Start 
 
 All services use Docker restart policies so they restart automatically after a container failure or server reboot.
 
