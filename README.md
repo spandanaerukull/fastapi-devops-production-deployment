@@ -103,5 +103,40 @@ The current AWS Security Group already allows HTTPS traffic on port 443.
 - Docker services use restart policies for reliability.
 - NGINX is used as the public reverse proxy, while backend services remain inside the Docker Compose network.
 
+ ## Backup and Restart Strategy
+
+### PostgreSQL Backup
+
+Create a database backup:
+
+```bash
+docker compose exec -T postgres \
+pg_dump -U fastapiuser fastapidb > backup.sql
+
+Restore a database backup:
+cat backup.sql | docker compose exec -T postgres \
+psql -U fastapiuser fastapidb
+
+Restart Strategy
+
+All services use Docker restart policies so they restart automatically after a container failure or server reboot.
+
+To restart all services manually:
+
+docker compose restart
+
+To rebuild and restart after a deployment:
+
+docker compose up -d --build --remove-orphans
+
+To check service status:
+
+docker compose ps
+
+# Application health can be verified using:
+
+curl http://localhost/health
+curl http://localhost/db-check
+curl http://localhost/redis-check
 
 
