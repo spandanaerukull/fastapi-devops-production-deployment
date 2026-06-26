@@ -112,33 +112,44 @@ Create a database backup:
 ```bash
 docker compose exec -T postgres \
 pg_dump -U fastapiuser fastapidb > backup.sql
+```
 
 Restore a database backup:
 
-cat backup.sql | docker compose exec -T postgres \ ```
-psql -U fastapiuser fastapidb ```
+```bash
+cat backup.sql | docker compose exec -T postgres \
+psql -U fastapiuser fastapidb
+```
 
-# Restart Start 
+### Restart Strategy
 
 All services use Docker restart policies so they restart automatically after a container failure or server reboot.
 
-# To restart all services manually:
+To restart all services manually:
 
+```bash
 docker compose restart
+```
 
 To rebuild and restart after a deployment:
 
+```bash
 docker compose up -d --build --remove-orphans
+```
 
 To check service status:
 
-docker compose ps ```text
+```bash
+docker compose ps
+```
 
-# Application health can be verified using:
+Application health can be verified using:
 
+```bash
 curl http://localhost/health
 curl http://localhost/db-check
 curl http://localhost/redis-check
+```
 
 ## Logging Strategy
 
@@ -148,22 +159,28 @@ Application logs can be viewed using:
 
 ```bash
 docker compose logs --tail=100 fastapi
+```
 
 NGINX access and error logs can be viewed using:
-docker compose logs --tail=100 nginx```
+
+```bash
+docker compose logs --tail=100 nginx
+```
 
 PostgreSQL and Redis logs can be viewed using:
 
-docker compose logs --tail=100 postgres```
-docker compose logs --tail=100 redis```
+```bash
+docker compose logs --tail=100 postgres
+docker compose logs --tail=100 redis
+```
 
-To follow logs in real time:
-docker compose logs -f```
+To follow all container logs in real time:
 
-Commit message:
+```bash
+docker compose logs -f
+```
 
-```text
-Add logging strategy documentation
+Docker log rotation should be configured in production to prevent logs from consuming excessive disk space.
 
 ## Deployment Instructions
 
@@ -171,66 +188,94 @@ Add logging strategy documentation
 
 Create an Ubuntu EC2 instance and configure the Security Group with:
 
-- Port 22 for SSH
-- Port 80 for HTTP
-- Port 443 for HTTPS
+* Port 22 for SSH
+* Port 80 for HTTP
+* Port 443 for HTTPS
 
 PostgreSQL port `5432` and Redis port `6379` must not be exposed publicly.
 
 ### 2. Connect to the Server
 
 ```bash
-ssh -i your-key.pem ubuntu@YOUR_ELASTIC_IP
+ssh -i your-key.pem ubuntu@18.213.165.227
+```
+
+### 3. Install Required Tools
 
 Install Git, Docker, and Docker Compose on the server.
 
 Verify the installations:
+
+```bash
 git --version
 docker --version
 docker compose version
+```
 
-4. Clone the Repository
+### 4. Clone the Repository
+
+```bash
 git clone https://github.com/spandanaerukulla/fastapi-devops-production-deployment.git
 cd fastapi-devops-production-deployment
+```
 
-5. Create the Environment File
+### 5. Create the Environment File
+
 Copy the example environment file:
+
+```bash
 cp .env.example .env
+```
 
-6. Start the Application
+Update `.env` with secure production values before starting the services.
+
+### 6. Start the Application
+
+```bash
 docker compose up -d --build
+```
 
-7. Verify the Containers
+### 7. Verify the Containers
+
+```bash
 docker compose ps
+```
 
-# The following services should be running:
+The following services should be running:
 
-1 FastAPI
-2 PostgreSQL
-3 Redis
-4 NGINX
+1. FastAPI
+2. PostgreSQL
+3. Redis
+4. NGINX
 
-8. Verify the Endpoints
--> curl http://localhost/healt
--> curl http://localhost/db-check
--> curl http://localhost/redis-check
+### 8. Verify the Endpoints
 
-9. Access the Application
+```bash
+curl http://localhost/health
+curl http://localhost/db-check
+curl http://localhost/redis-check
+```
+
+### 9. Access the Application
+
 Open the following URLs using the EC2 Elastic IP:
 
+```text
 http://18.213.165.227/
 http://18.213.165.227/health
 http://18.213.165.227/db-check
 http://18.213.165.227/redis-check
 http://18.213.165.227/docs
+```
 
-10. Automatic Deployment
-Every push to the master branch triggers the GitHub Actions workflow.
+### 10. Automatic Deployment
 
-# The workflow:
+Every push to the `master` branch triggers the GitHub Actions workflow.
 
-Builds the Docker image.
-Connects to the EC2 server using SSH.
-Pulls the latest source code.
-Rebuilds and restarts the Docker Compose services.
-Verifies the health, database, and Redis endpoints.
+The workflow:
+
+1. Builds the Docker image.
+2. Connects to the EC2 server using SSH.
+3. Pulls the latest source code.
+4. Rebuilds and restarts the Docker Compose services.
+5. Verifies the health, database, and Redis endpoints.
